@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">AHI</string>
+    <string name="assistant_title">AHI</string>
+    <string name="assistant_subtitle">Neural Voice Companion</string>
+    <string name="status_disconnected">Standby • Tap to activate</string>
+    <string name="status_connecting">Synchronizing neural link...</string>
+    <string name="status_listening">Listening to you...</string>
+    <string name="status_thinking">Thinking...</string>
+    <string name="status_speaking">AHI is speaking</string>
+    <string name="mic_permission_rationale">AHI requires microphone access for real-time voice conversation.</string>
+    <string name="grant_permission">Grant Permission</string>
+</resources>
