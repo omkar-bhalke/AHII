@@ -388,4 +388,208 @@ fun ApiSetupScreen(
                                                     isError = false
                                                 }
                                                 is TestResult.Error -> {
-              
+                                                    testFeedback = result.message
+                                                    isError = true
+                                                }
+                                            }
+                                        }
+                                    }
+                                    .testTag("test_api_button")
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    if (isTesting) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(14.dp),
+                                            strokeWidth = 2.dp,
+                                            color = Color(0xFF2DD4BF)
+                                        )
+                                    } else {
+                                        Icon(
+                                            imageVector = Icons.Default.Shield,
+                                            contentDescription = null,
+                                            tint = if (canTest) Color(0xFF2DD4BF) else Color(0xFF64748B),
+                                            modifier = Modifier.size(15.dp)
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = "TEST",
+                                        fontSize = 11.5.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        letterSpacing = 0.5.sp,
+                                        color = if (canTest) Color(0xFF2DD4BF) else Color(0xFF64748B)
+                                    )
+                                }
+                            }
+
+                            // 4. GET KEY Button
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(44.dp)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(Color(0xFF1E1B4B))
+                                    .border(1.dp, Color(0xFF312E81), RoundedCornerShape(10.dp))
+                                    .clickable {
+                                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://aistudio.google.com/apikey")).apply {
+                                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                        }
+                                        context.startActivity(intent)
+                                    }
+                                    .testTag("get_key_button")
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.OpenInNew,
+                                        contentDescription = null,
+                                        tint = Color(0xFF818CF8),
+                                        modifier = Modifier.size(15.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = "GET",
+                                        fontSize = 11.5.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        letterSpacing = 0.5.sp,
+                                        color = Color(0xFFA5B4FC)
+                                    )
+                                }
+                            }
+                        }
+
+                        // Feedback message under buttons (success / info / error)
+                        if (testFeedback != null) {
+                            Spacer(modifier = Modifier.height(10.dp))
+                            Text(
+                                text = testFeedback!!,
+                                fontSize = 12.sp,
+                                lineHeight = 16.sp,
+                                color = if (isError) Color(0xFFF87171) else Color(0xFF34D399),
+                                fontWeight = FontWeight.Medium
+                            )
+
+                            if (isError) {
+                                Spacer(modifier = Modifier.height(6.dp))
+                                Text(
+                                    text = "→ Tap here to continue anyway without testing",
+                                    fontSize = 11.5.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color(0xFF38BDF8),
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(6.dp))
+                                        .clickable { onKeySaved(apiKeyText.trim()) }
+                                        .padding(vertical = 4.dp, horizontal = 2.dp)
+                                        .testTag("save_anyway_button")
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        // "▶ HOW TO GET A KEY" Expandable Section
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .clickable { isHelpExpanded = !isHelpExpanded }
+                                .padding(vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = if (isHelpExpanded) "▼ HOW TO GET A KEY" else "▶ HOW TO GET A KEY",
+                                fontSize = 11.5.sp,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 0.5.sp,
+                                color = Color(0xFF94A3B8)
+                            )
+                        }
+
+                        AnimatedVisibility(
+                            visible = isHelpExpanded,
+                            enter = fadeIn() + expandVertically(),
+                            exit = fadeOut() + shrinkVertically()
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 8.dp)
+                            ) {
+                                Text("1. Tap 'GET KEY' or visit aistudio.google.com/apikey", fontSize = 11.5.sp, color = Color(0xFFCBD5E1), lineHeight = 16.sp)
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text("2. Sign in with Google and tap 'Create API Key'", fontSize = 11.5.sp, color = Color(0xFFCBD5E1), lineHeight = 16.sp)
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text("3. Copy your key and tap 'PASTE' above", fontSize = 11.5.sp, color = Color(0xFFCBD5E1), lineHeight = 16.sp)
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(18.dp))
+
+                // Security Note with Shield Icon
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.Top
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Security,
+                        contentDescription = null,
+                        tint = Color(0xFF14B8A6), // Teal shield
+                        modifier = Modifier
+                            .size(16.dp)
+                            .padding(top = 2.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "The saved key is encrypted by Android Keystore and is never returned to this interface, written to localStorage, bundled in the APK, or included in diagnostics.",
+                        fontSize = 11.sp,
+                        lineHeight = 15.sp,
+                        color = Color(0xFF64748B)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Bottom Gradient Button: "CONTINUE WITH DEMO KEY" / "SAVE & CONTINUE"
+                val canSubmit = apiKeyText.isNotBlank()
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(
+                            if (canSubmit) {
+                                Brush.horizontalGradient(
+                                    colors = listOf(
+                                        Color(0xFF3B82F6), // Deep blue / indigo
+                                        Color(0xFF0EA5E9), // Cyan
+                                        Color(0xFF0D9488)  // Teal
+                                    )
+                                )
+                            } else {
+                                Brush.horizontalGradient(
+                                    colors = listOf(
+                                        Color(0x333B82F6),
+                                        Color(0x330D9488)
+                                    )
+                                )
+                            }
+                        )
+                        .clickable(enabled = canSubmit) {
+                            onKeySaved(apiKeyText.trim())
+                        }
+                        .testTag("test_save_continue_button")
+                ) {
+                    Text(
+                        text = if (apiKeyText.trim() == DEFAULT_DEMO_API_KEY) "CONTINUE WITH DEMO KEY" else "SAVE & CONTINUE",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp,
+                        color = if (canSubmit) Color.White else Color(0x66FFFFFF)
+                    )
+                }
+            }
+        }
+    }
+}
+
